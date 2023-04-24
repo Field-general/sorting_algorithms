@@ -1,4 +1,5 @@
 #include "sort.h"
+#include <stdio.h>
 /**
 * bitonic_compare - sort bitonic algorithm
 * @up: direction of sorting
