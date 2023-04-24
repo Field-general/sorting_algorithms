@@ -1,42 +1,54 @@
 #include "sort.h"
+
+void move_left(listint_t *curr, listint_t *insertion, listint_t **head);
 /**
- * insertion_sort_list - function that sorts a doubly linked list
- *                       of integers in ascending order using the Insertion
- *                       sort algorithm
- * @list: doubly linked list
- * Return: void
+ * insertion_sort_list - sort a doubly linked list of integer
+ * in ascending order
+ * @list: pointer to the head of the doubly linked list
  */
 
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *node = NULL, *tmp = NULL;
+	listint_t *curr = NULL;
+	listint_t *insertion = NULL;
 
 	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
 
-	node = *list;
-	node = node->next;
-	while (node)
+	curr = (*list)->next;
+	insertion = curr->prev;
+	while (curr != NULL)
 	{
-		while (node->prev && node->n < (node->prev)->n)
+		insertion = curr->prev;
+		while (insertion != NULL && insertion->n > curr->n)
 		{
-			tmp = node;
-			if (node->next)
-				(node->next)->prev = tmp->prev;
-			(node->prev)->next = tmp->next;
-			node = node->prev;
-			tmp->prev = node->prev;
-			tmp->next = node;
-			if (node->prev)
-				(node->prev)->next = tmp;
-			node->prev = tmp;
-			if (tmp->prev == NULL)
-				*list = tmp;
-			print_list(*list);
-			node = node->prev;
+			move_left(curr, insertion, list);
+			insertion = curr->prev;
 		}
-		node = node->next;
+		curr = curr->next;
 	}
-
 }
+/**
+* move_left - swaps two members of a list
+*
+* @curr: current node to be moved at left of insertion
+* @insertion: insertion pointer
+* @head: head of list
+*/
+void move_left(listint_t *curr, listint_t *insertion, listint_t **head)
+{
+	listint_t *swap1 = curr->next;
+	listint_t *swap2 = insertion->prev;
 
+	if (swap1 != NULL)
+		swap1->prev = insertion;
+	if (swap2 != NULL)
+		swap2->next = curr;
+	curr->prev = swap2;
+	insertion->next = swap1;
+	curr->next = insertion;
+	insertion->prev = curr;
+	if (*head == insertion)
+		*head = curr;
+	print_list(*head);
+}
